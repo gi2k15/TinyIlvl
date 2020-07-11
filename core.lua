@@ -49,7 +49,6 @@ local function UpdateLevels()
 			local itemLocation = ItemLocation:CreateFromEquipmentSlot(k)
 			if itemLocation:IsValid() then 
 				local itemLevel = C_Item.GetCurrentItemLevel(itemLocation)
-				--local itemLevel = GetDetailedItemLevelInfo(itemID)
 				iLvlText[k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
 				iLvlText[k]:SetText(iLvlText[k].color:WrapTextInColorCode(itemLevel))
 				if k == 2 then
