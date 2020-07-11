@@ -40,7 +40,7 @@ local f = CreateFrame("Frame")
 local iLvlText = {}
 
 local function UpdateLevels()
-	print("Teste")
+	--print("Teste")
 	local _, averageILvl = GetAverageItemLevel()
 	for k = 1, 17 do
 		if slot[k] then
