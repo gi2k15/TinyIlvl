@@ -53,7 +53,11 @@ local function UpdateLevels()
 				--local itemLevel = GetDetailedItemLevelInfo(itemID)
 				iLvlText[k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
 				iLvlText[k]:SetText(iLvlText[k].color:WrapTextInColorCode(itemLevel))
-				iLvlText[k]:SetPoint("BOTTOM", "Character" .. slot[k] .. "Slot", "BOTTOM", 0, 2)
+				if k == 2 then
+					iLvlText[k]:SetPoint("TOP", "Character" .. slot[k] .. "Slot", "TOP", 0, -2)
+				else
+					iLvlText[k]:SetPoint("BOTTOM", "Character" .. slot[k] .. "Slot", "BOTTOM", 0, 2)
+				end
 			elseif iLvlText[k] then
 				iLvlText[k]:SetText("")
 			end
