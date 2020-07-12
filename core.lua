@@ -39,7 +39,7 @@ end
 local f = CreateFrame("Frame")
 local iLvlText = {}
 
-local function UpdateLevels()
+local function GetLevels(target)
 	local _, averageILvl = GetAverageItemLevel()
 	for k = 1, 17 do
 		if slot[k] then
@@ -52,9 +52,9 @@ local function UpdateLevels()
 				iLvlText[k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
 				iLvlText[k]:SetText(iLvlText[k].color:WrapTextInColorCode(itemLevel))
 				if k == 2 then
-					iLvlText[k]:SetPoint("TOP", "Character" .. slot[k] .. "Slot", "TOP", 0, -2)
+					iLvlText[k]:SetPoint("TOP", target .. slot[k] .. "Slot", "TOP", 0, -2)
 				else
-					iLvlText[k]:SetPoint("BOTTOM", "Character" .. slot[k] .. "Slot", "BOTTOM", 0, 2)
+					iLvlText[k]:SetPoint("BOTTOM", target .. slot[k] .. "Slot", "BOTTOM", 0, 2)
 				end
 			elseif iLvlText[k] then
 				iLvlText[k]:SetText("")
@@ -64,10 +64,28 @@ local function UpdateLevels()
 end
 
 f:RegisterEvent("ITEM_LOCK_CHANGED")
-f:SetScript("OnEvent", function()
-	UpdateLevels()
+f:RegisterEvent("INSPECT_READY")
+f:SetScript("OnEvent", function(self, event)
+	if event == "ITEM_LOCK_CHANGED" then
+		GetLevels("Character")
+	elseif event == "INSPECT_READY" then
+		--print("Inspect try")
+		if InspectPaperDollItemsFrame then
+			print("Inspect did")
+			f:SetParent(InspectPaperDollItemsFrame)
+			GetLevels("Inspect")
+		else
+			print("Doesn't exist")
+		end
+	end
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
+	print("char")
 	f:SetParent(self)
-	UpdateLevels()
+	GetLevels("Character")
 end)
+-- PaperDollInspectItemsFrame:HookScript("OnShow", function(self)
+	-- print("inspect")
+	-- f:SetParent(self)
+	-- GetLevels("Inspect")
+-- end)
