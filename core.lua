@@ -36,56 +36,57 @@ local function ColorGradient(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
-local f = CreateFrame("Frame")
+local f = {
+	player = CreateFrame("Frame"),
+	target = CreateFrame("Frame"),
+}
 local iLvlText = {}
 
 local function GetLevels(target)
+	iLvlText[target] = {}
+	local button
+	if target == "player" then
+		button = "Character"
+	else
+		button = "Inspect"
+	end
 	local _, averageILvl = GetAverageItemLevel()
 	for k = 1, 17 do
 		if slot[k] then
-			if not iLvlText[k] then
-				iLvlText[k] = f:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
+			if not iLvlText[target][k] then
+				iLvlText[target][k] = f[target]:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
 			end	
-			local itemLocation = ItemLocation:CreateFromEquipmentSlot(k)
-			if itemLocation:IsValid() then 
-				local itemLevel = C_Item.GetCurrentItemLevel(itemLocation)
-				iLvlText[k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
-				iLvlText[k]:SetText(iLvlText[k].color:WrapTextInColorCode(itemLevel))
-				if k == 2 then
-					iLvlText[k]:SetPoint("TOP", target .. slot[k] .. "Slot", "TOP", 0, -2)
+			local itemLink = GetInventoryItemLink(target, k)
+			if itemLink then 
+				local itemLevel = GetDetailedItemLevelInfo(itemLink)
+				local itemQuality = GetInventoryItemQuality(target, k)
+				iLvlText[target][k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
+				iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(itemLevel))
+				if k == 2 and itemQuality == 6 then
+					iLvlText[target][k]:SetPoint("TOP", button .. slot[k] .. "Slot", "TOP", 0, -2)
+					print("Artifact")
 				else
-					iLvlText[k]:SetPoint("BOTTOM", target .. slot[k] .. "Slot", "BOTTOM", 0, 2)
+					iLvlText[target][k]:SetPoint("BOTTOM", button .. slot[k] .. "Slot", "BOTTOM", 0, 2)
 				end
-			elseif iLvlText[k] then
-				iLvlText[k]:SetText("")
+			elseif iLvlText[target][k] then
+				iLvlText[target][k]:SetText("")
 			end
 		end
 	end
 end
 
-f:RegisterEvent("ITEM_LOCK_CHANGED")
-f:RegisterEvent("INSPECT_READY")
-f:SetScript("OnEvent", function(self, event)
-	if event == "ITEM_LOCK_CHANGED" then
-		GetLevels("Character")
-	elseif event == "INSPECT_READY" then
-		--print("Inspect try")
-		if InspectPaperDollItemsFrame then
-			print("Inspect did")
-			f:SetParent(InspectPaperDollItemsFrame)
-			GetLevels("Inspect")
-		else
-			print("Doesn't exist")
-		end
-	end
+f.player:RegisterEvent("ITEM_LOCK_CHANGED")
+f.player:SetScript("OnEvent", function(self, event)
+	GetLevels("player")
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
-	print("char")
-	f:SetParent(self)
-	GetLevels("Character")
+	f.player:SetParent(self)
+	GetLevels("player")
 end)
--- PaperDollInspectItemsFrame:HookScript("OnShow", function(self)
-	-- print("inspect")
-	-- f:SetParent(self)
-	-- GetLevels("Inspect")
--- end)
+
+f.target:RegisterEvent("INSPECT_READY")
+f.target:SetScript("OnEvent", function(self)
+	--self:UnregisterEvent("INSPECT_READY")
+	f.target:SetParent(InspectPaperDollItemsFrame)
+	GetLevels("target")
+end)
