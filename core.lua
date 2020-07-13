@@ -64,7 +64,6 @@ local function GetLevels(target)
 				iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(itemLevel))
 				if k == 2 and itemQuality == 6 then
 					iLvlText[target][k]:SetPoint("TOP", button .. slot[k] .. "Slot", "TOP", 0, -2)
-					print("Artifact")
 				else
 					iLvlText[target][k]:SetPoint("BOTTOM", button .. slot[k] .. "Slot", "BOTTOM", 0, 2)
 				end
