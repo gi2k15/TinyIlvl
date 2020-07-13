@@ -62,7 +62,7 @@ local function GetLevels(target)
 				local itemQuality = GetInventoryItemQuality(target, k)
 				iLvlText[target][k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
 				iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(itemLevel))
-				if k == 2 and itemQuality == 6 then
+				if k == 2 and itemQuality == 6 and target == "player" then
 					iLvlText[target][k]:SetPoint("TOP", button .. slot[k] .. "Slot", "TOP", 0, -2)
 				else
 					iLvlText[target][k]:SetPoint("BOTTOM", button .. slot[k] .. "Slot", "BOTTOM", 0, 2)
