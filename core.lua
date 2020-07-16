@@ -40,10 +40,12 @@ local f = {
 	player = CreateFrame("Frame"),
 	target = CreateFrame("Frame"),
 }
-local iLvlText = {}
+local iLvlText = {
+	player = {},
+	target = {},
+}
 
 local function GetLevels(target)
-	iLvlText[target] = {}
 	local button
 	if target == "player" then
 		button = "Character"
@@ -86,8 +88,6 @@ end)
 
 f.target:RegisterEvent("INSPECT_READY")
 f.target:SetScript("OnEvent", function(self)
-	--self:UnregisterEvent("INSPECT_READY")
-	f.player:Hide()
 	f.target:SetParent(InspectPaperDollItemsFrame)
 	GetLevels("target")
 end)
