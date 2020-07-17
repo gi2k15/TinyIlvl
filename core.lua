@@ -82,7 +82,7 @@ f.player:SetScript("OnEvent", function(self, event)
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
 	f.player:SetParent(self)
-	f.player:Show()
+	--f.player:Show()
 	GetLevels("player")
 end)
 
