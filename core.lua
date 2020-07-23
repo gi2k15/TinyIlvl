@@ -17,6 +17,15 @@ local slot = {
 	[17] = "SecondaryHand"
 }
 
+local f = {
+	player = CreateFrame("Frame"),
+	target = CreateFrame("Frame"),
+}
+local iLvlText = {
+	player = {},
+	target = {},
+}
+
 local function ColorGradient(perc, ...)
 -- Function retrieved from Wowpedia. https://wow.gamepedia.com/ColorGradient
 -- CC BY-SA 3.0
@@ -36,38 +45,54 @@ local function ColorGradient(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
-local f = CreateFrame("Frame")
-local iLvlText = {}
-
-local function UpdateLevels()
+local function GetLevels(target)
+	local button
+	if target == "player" then
+		button = "Character"
+	else
+		button = "Inspect"
+		if not iLvlText[target].ilvl then
+			iLvlText[target].ilvl = f.target:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		end
+		iLvlText[target].ilvl:SetText("ilvl " .. C_PaperDollInfo.GetInspectItemLevel(target))
+		iLvlText[target].ilvl:SetPoint("RIGHT", InspectPaperDollItemsFrame, "TOPRIGHT", -5, -45)
+	end
 	local _, averageILvl = GetAverageItemLevel()
 	for k = 1, 17 do
 		if slot[k] then
-			if not iLvlText[k] then
-				iLvlText[k] = f:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
+			if not iLvlText[target][k] then
+				iLvlText[target][k] = f[target]:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
 			end	
-			local itemLocation = ItemLocation:CreateFromEquipmentSlot(k)
-			if itemLocation:IsValid() then 
-				local itemLevel = C_Item.GetCurrentItemLevel(itemLocation)
-				iLvlText[k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
-				iLvlText[k]:SetText(iLvlText[k].color:WrapTextInColorCode(itemLevel))
-				if k == 2 then
-					iLvlText[k]:SetPoint("TOP", "Character" .. slot[k] .. "Slot", "TOP", 0, -2)
+			local itemLink = GetInventoryItemLink(target, k)
+			if itemLink then 
+				local itemLevel = GetDetailedItemLevelInfo(itemLink)
+				local itemQuality = GetInventoryItemQuality(target, k)
+				iLvlText[target][k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
+				iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(itemLevel))
+				if k == 2 and itemQuality == 6 and target == "player" then
+					iLvlText[target][k]:SetPoint("TOP", button .. slot[k] .. "Slot", "TOP", 0, -2)
 				else
-					iLvlText[k]:SetPoint("BOTTOM", "Character" .. slot[k] .. "Slot", "BOTTOM", 0, 2)
+					iLvlText[target][k]:SetPoint("BOTTOM", button .. slot[k] .. "Slot", "BOTTOM", 0, 2)
 				end
-			elseif iLvlText[k] then
-				iLvlText[k]:SetText("")
+			elseif iLvlText[target][k] then
+				iLvlText[target][k]:SetText("")
 			end
 		end
 	end
 end
 
-f:RegisterEvent("ITEM_LOCK_CHANGED")
-f:SetScript("OnEvent", function()
-	UpdateLevels()
+f.player:RegisterEvent("ITEM_LOCK_CHANGED")
+f.player:SetScript("OnEvent", function(self, event)
+	GetLevels("player")
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
+	f.player:SetParent(self)
+	GetLevels("player")
+end)
+
+f.target:RegisterEvent("INSPECT_READY")
+f.target:SetScript("OnEvent", function(self)
+	f.target:SetParent(InspectPaperDollItemsFrame)
 	f:SetParent(self)
-	UpdateLevels()
+	GetLevels("target")
 end)
