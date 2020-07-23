@@ -17,6 +17,15 @@ local slot = {
 	[17] = "SecondaryHand"
 }
 
+local f = {
+	player = CreateFrame("Frame"),
+	target = CreateFrame("Frame"),
+}
+local iLvlText = {
+	player = {},
+	target = {},
+}
+
 local function ColorGradient(perc, ...)
 -- Function retrieved from Wowpedia. https://wow.gamepedia.com/ColorGradient
 -- CC BY-SA 3.0
@@ -36,21 +45,17 @@ local function ColorGradient(perc, ...)
 	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
 end
 
-local f = {
-	player = CreateFrame("Frame"),
-	target = CreateFrame("Frame"),
-}
-local iLvlText = {
-	player = {},
-	target = {},
-}
-
 local function GetLevels(target)
 	local button
 	if target == "player" then
 		button = "Character"
 	else
 		button = "Inspect"
+		if not iLvlText[target].ilvl then
+			iLvlText[target].ilvl = f.target:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		end
+		iLvlText[target].ilvl:SetText("ilvl " .. C_PaperDollInfo.GetInspectItemLevel(target))
+		iLvlText[target].ilvl:SetPoint("RIGHT", InspectPaperDollItemsFrame, "TOPRIGHT", -5, -45)
 	end
 	local _, averageILvl = GetAverageItemLevel()
 	for k = 1, 17 do
@@ -82,7 +87,6 @@ f.player:SetScript("OnEvent", function(self, event)
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
 	f.player:SetParent(self)
-	--f.player:Show()
 	GetLevels("player")
 end)
 
