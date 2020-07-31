@@ -67,7 +67,7 @@ local function GetLevels(target)
 			if itemLink then 
 				local itemLevel = GetDetailedItemLevelInfo(itemLink)
 				local itemQuality = GetInventoryItemQuality(target, k)
-				iLvlText[target][k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) 
+				iLvlText[target][k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) -- red, yellow, green
 				iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(itemLevel))
 				if k == 2 and itemQuality == 6 and target == "player" then
 					iLvlText[target][k]:SetPoint("TOP", button .. slot[k] .. "Slot", "TOP", 0, -2)
@@ -81,6 +81,7 @@ local function GetLevels(target)
 	end
 end
 
+-- Character
 f.player:RegisterEvent("ITEM_LOCK_CHANGED")
 f.player:SetScript("OnEvent", function(self, event)
 	GetLevels("player")
@@ -90,6 +91,7 @@ PaperDollItemsFrame:HookScript("OnShow", function(self)
 	GetLevels("player")
 end)
 
+-- Inspect
 f.target:RegisterEvent("INSPECT_READY")
 f.target:SetScript("OnEvent", function(self)
 	f.target:SetParent(InspectPaperDollItemsFrame)

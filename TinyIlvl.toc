@@ -1,6 +1,6 @@
 ## Interface: 80300
 ## Name: TinyIlvl
-## Notes: A simple yet nice iLvl for equipped items.
-## Author: gi2k15
+## Notes: Displays item levels in the character and inspect frames.
+## Author: Beviselynt
 
 core.lua
