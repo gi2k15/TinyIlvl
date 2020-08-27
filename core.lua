@@ -82,7 +82,8 @@ local function GetLevels(target)
 end
 
 -- Character
-f.player:RegisterEvent("ITEM_LOCK_CHANGED")
+f.player:RegisterEvent("ITEM_UNLOCKED")
+f.player:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 f.player:SetScript("OnEvent", function(self, event)
 	GetLevels("player")
 end)
