@@ -1,6 +1,6 @@
-## Interface: 80300
+## Interface: 90001
 ## Name: TinyIlvl
-## Notes: Displays item levels in the character and inspect frames.
+## Notes: Displays items' level in the character and inspect frames.
 ## Author: Beviselynt
 
 core.lua
