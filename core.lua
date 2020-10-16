@@ -33,9 +33,7 @@ local function ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
         return r1, g1, b1
     end
 
-    local num = 10 / 3
-
-    local segment, relperc = math.modf(perc * (num - 1))
+    local segment, relperc = math.modf(perc * 2)
     local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
 
     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
