@@ -26,25 +26,6 @@ local iLvlText = {
 	target = {},
 }
 
---[[ local function ColorGradient(perc, ...)
--- Function retrieved from Wowpedia. https://wow.gamepedia.com/ColorGradient
--- CC BY-SA 3.0
-	if perc >= 1 then
-		local r, g, b = select(select('#', ...) - 2, ...)
-		return r, g, b
-	elseif perc <= 0 then
-		local r, g, b = ...
-		return r, g, b
-	end
-	
-	local num = select('#', ...) / 3
-	
-	local segment, relperc = math.modf(perc*(num-1))
-	local r1, g1, b1, r2, g2, b2 = select((segment*3)+1, ...)
-	
-	return r1 + (r2-r1)*relperc, g1 + (g2-g1)*relperc, b1 + (b2-b1)*relperc
-end ]]
-
 local function ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
     if perc >= 1 then
         return r3, g3, b3
