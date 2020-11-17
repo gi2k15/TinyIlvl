@@ -46,7 +46,7 @@ local function GetLevels(target)
 	else
 		button = "Inspect"
 		if not iLvlText[target].ilvl then
-			iLvlText[target].ilvl = f.target:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			iLvlText[target].ilvl = f.target:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
 		end
 		iLvlText[target].ilvl:SetText("ilvl " .. C_PaperDollInfo.GetInspectItemLevel(target))
 		iLvlText[target].ilvl:SetPoint("RIGHT", InspectPaperDollItemsFrame, "TOPRIGHT", -5, -45)
