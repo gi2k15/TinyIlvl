@@ -79,18 +79,18 @@ end
 f.player:RegisterEvent("ITEM_UNLOCKED")
 f.player:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 f.player:SetScript("OnEvent", function(self, event)
-	if PaperDollItemsFrame:IsShown() then
-		GetLevels("player")
-	end
+    if PaperDollItemsFrame then
+        GetLevels("player")
+    end
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
-	f.player:SetParent(self)
-	GetLevels("player")
+    f.player:SetParent(self)
+    GetLevels("player")
 end)
 
 -- Inspect
 f.target:RegisterEvent("INSPECT_READY")
 f.target:SetScript("OnEvent", function(self)
 	f.target:SetParent(InspectPaperDollItemsFrame)
-	GetLevels("target")
+    GetLevels("target")
 end)
