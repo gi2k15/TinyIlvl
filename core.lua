@@ -1,3 +1,6 @@
+-- Load the Inspect frame
+InspectFrame_LoadUI()
+
 local slot = {
 	[1] = "Head",
 	[2] = "Neck",
@@ -21,6 +24,8 @@ local f = {
 	player = CreateFrame("Frame"),
 	target = CreateFrame("Frame"),
 }
+f.target:SetParent(InspectPaperDollItemsFrame)
+f.player:SetParent(PaperDollItemsFrame)
 for k,v in pairs(f) do v:Hide() end
 
 local iLvlText = {
@@ -85,8 +90,7 @@ f.player:SetScript("OnEvent", function(self, event)
         GetLevels("player")
     end
 end)
-PaperDollItemsFrame:HookScript("OnShow", function(self)
-    f.player:SetParent(self)
+PaperDollItemsFrame:HookScript("OnShow", function()
 	f.player:Show()
     GetLevels("player")
 end)
@@ -95,7 +99,6 @@ end)
 local isHooked = false
 f.target:RegisterEvent("INSPECT_READY")
 f.target:SetScript("OnEvent", function(self)
-	f.target:SetParent(InspectPaperDollItemsFrame)
     GetLevels("target")
 	if not isHooked then
 		InspectPaperDollItemsFrame:HookScript("OnShow", function()
