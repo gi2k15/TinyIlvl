@@ -21,6 +21,8 @@ local f = {
 	player = CreateFrame("Frame"),
 	target = CreateFrame("Frame"),
 }
+for k,v in pairs(f) do v:Hide() end
+
 local iLvlText = {
 	player = {},
 	target = {},
@@ -85,12 +87,20 @@ f.player:SetScript("OnEvent", function(self, event)
 end)
 PaperDollItemsFrame:HookScript("OnShow", function(self)
     f.player:SetParent(self)
+	f.player:Show()
     GetLevels("player")
 end)
 
 -- Inspect
+local isHooked = false
 f.target:RegisterEvent("INSPECT_READY")
 f.target:SetScript("OnEvent", function(self)
 	f.target:SetParent(InspectPaperDollItemsFrame)
     GetLevels("target")
+	if not isHooked then
+		InspectPaperDollItemsFrame:HookScript("OnShow", function()
+			self:Show()
+			isHooked = true
+		end)
+	end
 end)
