@@ -1,6 +1,3 @@
--- Load the Inspect frame
-InspectFrame_LoadUI()
-
 local slot = {
 	[1] = "Head",
 	[2] = "Neck",
@@ -24,9 +21,7 @@ local f = {
 	player = CreateFrame("Frame"),
 	target = CreateFrame("Frame"),
 }
-f.target:SetParent(InspectPaperDollItemsFrame)
 f.player:SetParent(PaperDollItemsFrame)
-for k,v in pairs(f) do v:Hide() end
 
 local iLvlText = {
 	player = {},
@@ -85,25 +80,21 @@ end
 -- Character
 f.player:RegisterEvent("ITEM_UNLOCKED")
 f.player:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-f.player:SetScript("OnEvent", function(self, event)
-    if PaperDollItemsFrame then
-        GetLevels("player")
-    end
+f.player:SetScript("OnEvent", function()
+    GetLevels("player")
 end)
 PaperDollItemsFrame:HookScript("OnShow", function()
-	f.player:Show()
     GetLevels("player")
 end)
 
 -- Inspect
-local isHooked = false
+f.target:RegisterEvent("ADDON_LOADED")
 f.target:RegisterEvent("INSPECT_READY")
-f.target:SetScript("OnEvent", function(self)
-    GetLevels("target")
-	if not isHooked then
-		InspectPaperDollItemsFrame:HookScript("OnShow", function()
-			self:Show()
-			isHooked = true
-		end)
+f.target:SetScript("OnEvent", function(self, event, ...)
+	if event == "ADDON_LOADED" and ... == "Blizzard_InspectUI" then
+		self:SetParent(InspectPaperDollItemsFrame)
+		self:UnregisterEvent("ADDON_LOADED")
+	elseif event == "INSPECT_READY" and InspectPaperDollItemsFrame then
+		GetLevels("target")
 	end
 end)
