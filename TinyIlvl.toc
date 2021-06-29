@@ -2,5 +2,9 @@
 ## Title: TinyIlvl
 ## Notes: Displays items' level in the character and inspect frames.
 ## Author: Beviselynt
+## Version: @project-version@
+## X-Curse-Project-ID: 399259
+## X-Wago-ID: WL6JmdNv
+## X-WoWI-ID: 26096
 
 core.lua
