@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 91000
 ## Title: TinyIlvl
 ## Notes: Displays items' level in the character and inspect frames.
 ## Author: Beviselynt
