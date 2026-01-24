@@ -28,6 +28,8 @@ local iLvlText = {
 	target = {},
 }
 
+local scanTooltip = CreateFrame("GameTooltip", "Inspect_ilvlScanTooltip", nil, "GameTooltipTemplate")
+
 local function ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
     if perc >= 1 then
         return r3, g3, b3
@@ -39,6 +41,30 @@ local function ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
     local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
 
     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
+end
+
+local function GetItemLevelFromTooltip(unit, slotId, itemLink)
+	local label = ITEM_LEVEL and ITEM_LEVEL:gsub("%%d", "") or "Item Level "
+	scanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+	scanTooltip:ClearLines()
+	if unit and slotId then
+		scanTooltip:SetInventoryItem(unit, slotId)
+	elseif itemLink then
+		scanTooltip:SetHyperlink(itemLink)
+	end
+	for i = 1, scanTooltip:NumLines() do
+		local line = _G[scanTooltip:GetName() .. "TextLeft" .. i]
+		local text = line and line:GetText()
+		if text and text:find(label, 1, true) then
+			local level = tonumber(text:match("(%d+)"))
+			if level then
+				scanTooltip:Hide()
+				return level
+			end
+		end
+	end
+	scanTooltip:Hide()
+	return nil
 end
 
 local function GetLevels(target)
@@ -53,7 +79,13 @@ local function GetLevels(target)
 		iLvlText[target].ilvl:SetText("ilvl " .. C_PaperDollInfo.GetInspectItemLevel(target))
 		iLvlText[target].ilvl:SetPoint("RIGHT", InspectPaperDollItemsFrame, "TOPRIGHT", -5, -45)
 	end
-	local _, averageILvl = GetAverageItemLevel()
+	-- Prefer displayed ilvl (character sheet) and fall back to average API.
+	local averageILvl = C_PaperDollInfo.GetInspectItemLevel(target)
+	if not averageILvl or averageILvl <= 0 then
+		local avgItemLevel, avgItemLevelEquipped, avgItemLevelPvp = GetAverageItemLevel()
+		averageILvl = avgItemLevelEquipped or 0
+	end
+	
 	for k = 1, 17 do
 		if slot[k] then
 			if not iLvlText[target][k] then
@@ -61,10 +93,17 @@ local function GetLevels(target)
 			end	
 			local itemLink = GetInventoryItemLink(target, k)
 			if itemLink then 
-				local itemLevel = GetDetailedItemLevelInfo(itemLink)
+				local effectiveILvl = GetItemLevelFromTooltip(target, k, itemLink)
+				if not effectiveILvl then
+					effectiveILvl = GetDetailedItemLevelInfo(itemLink)
+				end
 				local itemQuality = GetInventoryItemQuality(target, k)
-				iLvlText[target][k].color = CreateColor(ColorGradient(itemLevel / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) -- red, yellow, green
-				iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(itemLevel))
+				if effectiveILvl and averageILvl > 0 then
+					iLvlText[target][k].color = CreateColor(ColorGradient(effectiveILvl / averageILvl - 0.5, 1,0,0, 1,1,0, 0,1,0)) -- red, yellow, green
+					iLvlText[target][k]:SetText(iLvlText[target][k].color:WrapTextInColorCode(effectiveILvl))
+				else
+					iLvlText[target][k]:SetText("")
+				end
 				if k == 2 and itemQuality == 6 and target == "player" then
 					iLvlText[target][k]:SetPoint("TOP", button .. slot[k] .. "Slot", "TOP", 0, -2)
 				else
@@ -83,6 +122,7 @@ f.player:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 f.player:SetScript("OnEvent", function()
     GetLevels("player")
 end)
+
 PaperDollItemsFrame:HookScript("OnShow", function()
     GetLevels("player")
 end)
