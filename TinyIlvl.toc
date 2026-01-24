@@ -1,5 +1,5 @@
 ## Interface: 120000 
-## Title: Inspect_ilvl
+## Title: TinyIlvl_Revived
 ## Notes: Displays items' level in the character, inspect frames and bagslots.
 ## Author: Ikilldragons
 ## Version: @project-version@
@@ -8,3 +8,5 @@
 ## X-WoWI-ID: 
 
 core.lua
+inspect.lua
+bag.lua
