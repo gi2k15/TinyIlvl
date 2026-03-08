@@ -1,10 +1,12 @@
-## Interface: 90100
-## Title: TinyIlvl
-## Notes: Displays items' level in the character and inspect frames.
-## Author: Beviselynt
+## Interface: 120000 
+## Title: TinyIlvl_Revived
+## Notes: Displays items' level in the character, inspect frames and bagslots.
+## Author: Ikilldragons
 ## Version: @project-version@
-## X-Curse-Project-ID: 399259
-## X-Wago-ID: WL6JmdNv
-## X-WoWI-ID: 26096
+## X-Curse-Project-ID: 
+## X-Wago-ID: 
+## X-WoWI-ID: 
 
 core.lua
+inspect.lua
+bag.lua
